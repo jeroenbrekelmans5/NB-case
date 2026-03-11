@@ -1,8 +1,11 @@
+export type Experience = 'Student' | 'Junior' | 'Medior' | 'Senior'
+
 export interface Offer {
 	id: number
 	title: string
 	location: string
 	department: string | null
+	experience: Experience | null
 	salary: {
 		min: number | null
 		max: number | null

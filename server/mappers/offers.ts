@@ -1,5 +1,6 @@
-import { Offer } from '../types'
+import type { Offer } from '../../types'
 import type { RecruiteeOffer } from '../types/backend'
+import { EXPERIENCE_CODES } from '../constants'
 
 export const mapOffer = (offer: RecruiteeOffer): Offer => {
 	return {
@@ -7,6 +8,7 @@ export const mapOffer = (offer: RecruiteeOffer): Offer => {
 		title: offer.title,
 		location: offer.location,
 		department: offer.department,
+		experience: offer.experience_code ? (EXPERIENCE_CODES[offer.experience_code] || null) : null,
 		salary: offer.salary
 			? {
 					min: offer.salary.min ? parseInt(offer.salary.min) : null,
