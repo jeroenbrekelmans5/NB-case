@@ -11,7 +11,7 @@ console.log(data)
 			<p class="text-gray-500">Loading...</p>
 		</div>
 		<div v-else-if="data">
-			<OfferCard v-for="offer in data.offers" :key="offer.id" v-bind="{ offer }" />
+			<OfferCard v-for="offer in data.offers" :key="offer.id" :offer />
 		</div>
 		<div v-else>
 			<p>No offers found</p>
