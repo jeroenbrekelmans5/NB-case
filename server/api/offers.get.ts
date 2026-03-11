@@ -1,3 +1,4 @@
+import { mapOffers } from '../mappers/offers'
 import type { RecruiteeApiResponse } from '../types/backend'
 
 export default defineEventHandler(async () => {
