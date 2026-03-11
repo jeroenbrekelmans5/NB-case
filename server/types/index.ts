@@ -1,4 +1,5 @@
 export interface Offer {
+	id: number
 	title: string
 	location: string
 	department: string | null

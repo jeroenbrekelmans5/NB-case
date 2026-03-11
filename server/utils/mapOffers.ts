@@ -3,6 +3,7 @@ import type { RecruiteeOffer } from '../types/backend'
 
 export const mapOffer = (offer: RecruiteeOffer): Offer => {
 	return {
+		id: offer.id,
 		title: offer.title,
 		location: offer.location,
 		department: offer.department,
