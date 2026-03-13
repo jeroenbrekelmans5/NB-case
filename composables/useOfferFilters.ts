@@ -5,12 +5,14 @@ type Filters = {
 	search?: string
 	city?: string[]
 	department?: string[]
-	experience?: string[]
+	hours?: string[]
+	salary?: string[]
+	currency?: string[]
 }
 
-type ArrayFilterKey = 'city' | 'department' | 'experience'
+type ArrayFilterKey = 'city' | 'department' | 'hours' | 'salary'
 
-const ARRAY_FILTERS: ArrayFilterKey[] = ['city', 'department', 'experience']
+const ARRAY_FILTERS: ArrayFilterKey[] = ['city', 'department', 'hours', 'salary']
 
 const parseQueryParam = (query: LocationQuery, key: string): string[] => {
 	return query[key] ? (query[key] as string).split(',') : []
@@ -18,6 +20,7 @@ const parseQueryParam = (query: LocationQuery, key: string): string[] => {
 
 export const useOfferFilters = (offers: Ref<Offer[]>) => {
 	const route = useRoute()
+	const router = useRouter()
 
 	const filters = reactive<Filters>({
 		search: route.query.search as string | undefined,
@@ -40,7 +43,7 @@ export const useOfferFilters = (offers: Ref<Offer[]>) => {
 				}
 			})
 
-			navigateTo({ query }, { replace: true })
+			router.replace({ query })
 		},
 		{ deep: true },
 	)
@@ -94,7 +97,8 @@ export const useOfferFilters = (offers: Ref<Offer[]>) => {
 
 	const cities = computed(() => getUniqueValues('city'))
 	const departments = computed(() => getUniqueValues('department'))
-	const experiences = computed(() => getUniqueValues('experience'))
+	const hours = computed(() => getUniqueValues('hours'))
+	const salary = computed(() => getUniqueValues('salary'))
 
 	return {
 		clearFilters,
@@ -102,6 +106,7 @@ export const useOfferFilters = (offers: Ref<Offer[]>) => {
 		filteredOffers,
 		cities,
 		departments,
-		experiences,
+		hours,
+		salary,
 	}
 }

@@ -5,7 +5,7 @@ const { data, pending } = await useFetch('/api/offers')
 const route = useRoute()
 const offers = computed(() => data.value?.offers || [])
 
-const { filters, filteredOffers, clearFilters, cities, departments, experiences } =
+const { filters, filteredOffers, clearFilters, cities, departments, hours, salary } =
 	useOfferFilters(offers)
 </script>
 
@@ -20,17 +20,30 @@ const { filters, filteredOffers, clearFilters, cities, departments, experiences 
 			<div class="mb-6 space-y-4">
 				<SearchBar v-model="filters.search" placeholder="Zoek op functietitel..." />
 
-				<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-					<MultiSelectFilter v-model="filters.city" label="Locatie" :options="cities" />
-					<MultiSelectFilter
+				<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+					<SelectFilter
+						v-model="filters.hours"
+						label="Aantal uur"
+						:options="hours"
+						multiSelect
+					/>
+					<SelectFilter
+						v-model="filters.salary"
+						label="Salaris"
+						:options="salary"
+						multiSelect
+					/>
+					<SelectFilter
+						v-model="filters.city"
+						label="Plaats"
+						:options="cities"
+						multiSelect
+					/>
+					<SelectFilter
 						v-model="filters.department"
 						label="Afdeling"
 						:options="departments"
-					/>
-					<MultiSelectFilter
-						v-model="filters.experience"
-						label="Ervaring"
-						:options="experiences"
+						multiSelect
 					/>
 				</div>
 			</div>

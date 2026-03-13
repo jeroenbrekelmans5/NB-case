@@ -4,9 +4,11 @@ const props = withDefaults(
 		label: string
 		options: string[]
 		modelValue?: string[]
+		multiSelect?: boolean
 	}>(),
 	{
 		modelValue: () => [],
+		multiSelect: false,
 	},
 )
 
@@ -18,11 +20,15 @@ const multiSelectFilter = ref<HTMLDivElement | null>(null)
 const isExpanded = ref(false)
 
 const toggleOption = (option: string) => {
-	const current = props.modelValue.includes(option)
-		? props.modelValue.filter((o) => o !== option)
-		: [...props.modelValue, option]
-
-	emit('update:modelValue', current)
+	if (props.multiSelect) {
+		const current = props.modelValue.includes(option)
+			? props.modelValue.filter((o) => o !== option)
+			: [...props.modelValue, option]
+		emit('update:modelValue', current)
+	} else {
+		emit('update:modelValue', [option])
+		isExpanded.value = false
+	}
 }
 
 const isSelected = (option: string) => {
@@ -70,9 +76,10 @@ onClickOutside(multiSelectFilter, () => {
 				class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded"
 			>
 				<input
-					type="checkbox"
+					:type="multiSelect ? 'checkbox' : 'radio'"
 					:checked="isSelected(option)"
 					@change="toggleOption(option)"
+					:name="multiSelect ? undefined : label"
 					class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
 				/>
 				<span>{{ option }}</span>
