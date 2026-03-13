@@ -24,7 +24,7 @@ const debouncedEmit = useDebounceFn(
 )
 
 const searchInput = computed({
-	get: () => props.modelValue,
+	get: () => props.modelValue || '',
 	set: (value: string) => debouncedEmit(value),
 })
 </script>
