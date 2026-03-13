@@ -6,6 +6,7 @@ export const mapOffer = (offer: RecruiteeOffer): Offer => {
 	return {
 		id: offer.id,
 		title: offer.title,
+		city: offer.city,
 		location: offer.location,
 		department: offer.department,
 		experience: offer.experience_code ? (EXPERIENCE_CODES[offer.experience_code] || null) : null,

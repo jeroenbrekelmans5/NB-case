@@ -3,6 +3,7 @@ export type Experience = 'Student' | 'Junior' | 'Medior' | 'Senior'
 export interface Offer {
 	id: number
 	title: string
+	city: string
 	location: string
 	department: string | null
 	experience: Experience | null
@@ -16,4 +17,10 @@ export interface Offer {
 		min: number | null
 		max: number | null
 	}
+}
+
+export interface OfferFilters {
+	city: string[]
+	department: string[]
+	search: string
 }
