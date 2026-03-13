@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useOfferFilters } from '../../composables/useOfferFilters'
-import type { ArrayFilterKey } from '../../types'
+import { useOfferFilters } from '~/composables/useOfferFilters'
+import type { ArrayFilterKey } from '~/types'
 
 const { data, pending } = await useFetch('/api/offers')
 const route = useRoute()

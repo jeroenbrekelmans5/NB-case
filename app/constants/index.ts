@@ -1,4 +1,4 @@
-import type { ArrayFilterKey, RangeBucket } from '../../types'
+import type { ArrayFilterKey, RangeBucket } from '~/types'
 
 export const EXACT_MATCH_FILTERS: ArrayFilterKey[] = ['city', 'department']
 export const RANGE_FILTERS: ArrayFilterKey[] = ['hours', 'salary']

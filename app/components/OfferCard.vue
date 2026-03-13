@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Offer } from '../../types'
+import type { Offer } from '~/types'
 
 defineProps<{
 	offer: Offer
