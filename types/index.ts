@@ -19,8 +19,17 @@ export interface Offer {
 	}
 }
 
-export interface OfferFilters {
-	city: string[]
-	department: string[]
-	search: string
+export type Filters = {
+	search?: string
+	city?: string[]
+	department?: string[]
+	hours?: string[]
+	salary?: string[]
+}
+
+export type ArrayFilterKey = 'city' | 'department' | 'hours' | 'salary'
+export type RangeBucket = {
+	min: number
+	max: number | null
+	label: string
 }

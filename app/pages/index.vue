@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useOfferFilters } from '../../composables/useOfferFilters'
+import type { ArrayFilterKey } from '../../types'
 
 const { data, pending } = await useFetch('/api/offers')
 const route = useRoute()
@@ -7,12 +8,25 @@ const offers = computed(() => data.value?.offers || [])
 
 const { filters, filteredOffers, clearFilters, cities, departments, hours, salary } =
 	useOfferFilters(offers)
+
+const filterConfigs = computed<{ key: ArrayFilterKey; label: string; options: string[] }[]>(() => [
+	{ key: 'hours', label: 'Aantal uur', options: hours.value },
+	{ key: 'salary', label: 'Salaris', options: salary.value },
+	{ key: 'city', label: 'Plaats', options: cities.value },
+	{ key: 'department', label: 'Afdeling', options: departments.value },
+])
 </script>
 
 <template>
 	<div class="container mx-auto px-4 py-8">
 		<h1 class="text-2xl font-bold text-center mb-8">NOBEARS CASE</h1>
 
+		<button
+			@click="clearFilters"
+			class="flex justify-self-end mb-4 px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+		>
+			Klik hier om je filters te resetten
+		</button>
 		<div v-if="pending">
 			<p class="text-gray-500">Loading...</p>
 		</div>
@@ -22,27 +36,11 @@ const { filters, filteredOffers, clearFilters, cities, departments, hours, salar
 
 				<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
 					<SelectFilter
-						v-model="filters.hours"
-						label="Aantal uur"
-						:options="hours"
-						multiSelect
-					/>
-					<SelectFilter
-						v-model="filters.salary"
-						label="Salaris"
-						:options="salary"
-						multiSelect
-					/>
-					<SelectFilter
-						v-model="filters.city"
-						label="Plaats"
-						:options="cities"
-						multiSelect
-					/>
-					<SelectFilter
-						v-model="filters.department"
-						label="Afdeling"
-						:options="departments"
+						v-for="config in filterConfigs"
+						:key="config.key"
+						v-model="filters[config.key]"
+						:label="config.label"
+						:options="config.options"
 						multiSelect
 					/>
 				</div>
@@ -61,12 +59,6 @@ const { filters, filteredOffers, clearFilters, cities, departments, hours, salar
 			</div>
 			<div v-else class="flex flex-col items-center justify-center text-center gap-4 py-12">
 				<p class="text-gray-500 text-lg">Geen vacatures gevonden op basis van je filters</p>
-				<button
-					@click="clearFilters"
-					class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-				>
-					Klik hier om je filters te resetten
-				</button>
 			</div>
 		</div>
 		<div v-else>

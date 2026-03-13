@@ -1,21 +1,28 @@
 import type { LocationQuery } from 'vue-router'
-import type { Offer } from '../types'
-
-type Filters = {
-	search?: string
-	city?: string[]
-	department?: string[]
-	hours?: string[]
-	salary?: string[]
-	currency?: string[]
-}
-
-type ArrayFilterKey = 'city' | 'department' | 'hours' | 'salary'
-
-const ARRAY_FILTERS: ArrayFilterKey[] = ['city', 'department', 'hours', 'salary']
+import { ARRAY_FILTERS, EXACT_MATCH_FILTERS, HOURS_BUCKETS, SALARY_BUCKETS } from '~/constants'
+import type { ArrayFilterKey, Filters, Offer, RangeBucket } from '../types'
 
 const parseQueryParam = (query: LocationQuery, key: string): string[] => {
 	return query[key] ? (query[key] as string).split(',') : []
+}
+
+const rangeOverlaps = (
+	offerMin: number | null,
+	offerMax: number | null,
+	bucketMin: number,
+	bucketMax: number | null,
+): boolean => {
+	if (offerMin === null && offerMax === null) return false
+
+	const effectiveOfferMin = offerMin ?? 0
+	const effectiveOfferMax = offerMax ?? Number.POSITIVE_INFINITY
+	const effectiveBucketMax = bucketMax ?? Number.POSITIVE_INFINITY
+
+	return effectiveOfferMin <= effectiveBucketMax && effectiveOfferMax >= bucketMin
+}
+
+const findBucketByLabel = (label: string, buckets: RangeBucket[]): RangeBucket | undefined => {
+	return buckets.find((bucket) => bucket.label === label)
 }
 
 export const useOfferFilters = (offers: Ref<Offer[]>) => {
@@ -48,16 +55,6 @@ export const useOfferFilters = (offers: Ref<Offer[]>) => {
 		{ deep: true },
 	)
 
-	watch(
-		() => route.query,
-		(query) => {
-			filters.search = query.search as string | undefined
-			ARRAY_FILTERS.forEach((key) => {
-				filters[key] = parseQueryParam(query, key)
-			})
-		},
-	)
-
 	const filteredOffers = computed(() => {
 		let result = offers.value
 
@@ -66,7 +63,7 @@ export const useOfferFilters = (offers: Ref<Offer[]>) => {
 			result = result.filter((offer) => offer.title.toLowerCase().includes(searchLower))
 		}
 
-		ARRAY_FILTERS.forEach((key) => {
+		EXACT_MATCH_FILTERS.forEach((key) => {
 			const filterValues = filters[key]
 			if (filterValues && filterValues.length > 0) {
 				result = result.filter((offer) => {
@@ -75,6 +72,35 @@ export const useOfferFilters = (offers: Ref<Offer[]>) => {
 				})
 			}
 		})
+
+		if (filters.salary && filters.salary.length > 0) {
+			result = result.filter((offer) => {
+				if (!offer.salary) return false
+
+				return filters.salary!.some((selectedLabel) => {
+					const bucket = findBucketByLabel(selectedLabel, SALARY_BUCKETS)
+					if (!bucket) return false
+
+					return rangeOverlaps(
+						offer.salary!.min,
+						offer.salary!.max,
+						bucket.min,
+						bucket.max,
+					)
+				})
+			})
+		}
+
+		if (filters.hours && filters.hours.length > 0) {
+			result = result.filter((offer) => {
+				return filters.hours!.some((selectedLabel) => {
+					const bucket = findBucketByLabel(selectedLabel, HOURS_BUCKETS)
+					if (!bucket) return false
+
+					return rangeOverlaps(offer.hours.min, offer.hours.max, bucket.min, bucket.max)
+				})
+			})
+		}
 
 		return result
 	})
@@ -86,7 +112,7 @@ export const useOfferFilters = (offers: Ref<Offer[]>) => {
 		})
 	}
 
-	const getUniqueValues = (key: ArrayFilterKey): string[] => {
+	const getUniqueArrayValues = (key: ArrayFilterKey): string[] => {
 		const values = new Set<string>()
 		offers.value.forEach((offer) => {
 			const value = offer[key] as string | undefined
@@ -95,10 +121,10 @@ export const useOfferFilters = (offers: Ref<Offer[]>) => {
 		return Array.from(values).sort()
 	}
 
-	const cities = computed(() => getUniqueValues('city'))
-	const departments = computed(() => getUniqueValues('department'))
-	const hours = computed(() => getUniqueValues('hours'))
-	const salary = computed(() => getUniqueValues('salary'))
+	const cities = computed(() => getUniqueArrayValues('city'))
+	const departments = computed(() => getUniqueArrayValues('department'))
+	const hours = computed(() => HOURS_BUCKETS.map((bucket) => bucket.label))
+	const salary = computed(() => SALARY_BUCKETS.map((bucket) => bucket.label))
 
 	return {
 		clearFilters,
