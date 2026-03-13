@@ -2,8 +2,10 @@
 import { useOfferFilters } from '../../composables/useOfferFilters'
 
 const { data, pending } = await useFetch('/api/offers')
+const route = useRoute()
 
 const offers = computed(() => data.value?.offers || [])
+
 const { filters, filteredOffers, clearFilters } = useOfferFilters(offers)
 </script>
 
@@ -24,10 +26,14 @@ const { filters, filteredOffers, clearFilters } = useOfferFilters(offers)
 			</h2>
 
 			<div v-if="filteredOffers.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-				<OfferCard v-for="offer in filteredOffers" :key="offer.id" :offer="offer" />
+				<template v-for="offer in filteredOffers" :key="offer.id">
+					<NuxtLink :to="{ path: `/${offer.id}`, query: route.query }">
+						<OfferCard :offer="offer" />
+					</NuxtLink>
+				</template>
 			</div>
 			<div v-else class="text-center py-12">
-				<p class="text-gray-500 text-lg">Geen vacatures gevonden</p>
+				<p class="text-gray-500 text-lg">Geen vacatures gevonden op basis van je filters</p>
 				<button @click="clearFilters">Klik hier om je filters te resetten</button>
 			</div>
 		</div>
