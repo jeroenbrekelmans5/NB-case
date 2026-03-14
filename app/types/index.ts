@@ -33,3 +33,9 @@ export type RangeBucket = {
 	max: number | null
 	label: string
 }
+
+export type FilterConfig = {
+	key: ArrayFilterKey
+	label: string
+	options: string[]
+}

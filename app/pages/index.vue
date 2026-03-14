@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useOfferFilters } from '~/composables/useOfferFilters'
-import type { ArrayFilterKey } from '~/types'
+import type { FilterConfig } from '~/types'
 
 const route = useRoute()
 const { data, pending } = await useFetch('/api/offers', {
@@ -10,18 +10,14 @@ const { data, pending } = await useFetch('/api/offers', {
 })
 
 const offers = computed(() => data.value?.offers || [])
-const cities = computed(() => data.value?.filters?.cities || [])
-const departments = computed(() => data.value?.filters?.departments || [])
-const hours = computed(() => data.value?.filters?.hours || [])
-const salary = computed(() => data.value?.filters?.salary || [])
 
 const { filters, clearFilters } = useOfferFilters()
 
-const filterConfigs = computed<{ key: ArrayFilterKey; label: string; options: string[] }[]>(() => [
-	{ key: 'hours', label: 'Aantal uur', options: hours.value },
-	{ key: 'salary', label: 'Salaris', options: salary.value },
-	{ key: 'city', label: 'Plaats', options: cities.value },
-	{ key: 'department', label: 'Afdeling', options: departments.value },
+const filterConfigs = computed<FilterConfig[]>(() => [
+	{ key: 'hours', label: 'Aantal uur', options: data.value?.filters?.hours || [] },
+	{ key: 'salary', label: 'Salaris', options: data.value?.filters?.salary || [] },
+	{ key: 'city', label: 'Plaats', options: data.value?.filters?.cities || [] },
+	{ key: 'department', label: 'Afdeling', options: data.value?.filters?.departments || [] },
 ])
 </script>
 
