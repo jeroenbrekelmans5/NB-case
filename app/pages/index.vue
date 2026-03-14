@@ -2,12 +2,20 @@
 import { useOfferFilters } from '~/composables/useOfferFilters'
 import type { ArrayFilterKey } from '~/types'
 
-const { data, pending } = await useFetch('/api/offers')
 const route = useRoute()
-const offers = computed(() => data.value?.offers || [])
+const { data, pending } = await useFetch('/api/offers', {
+	key: 'offers',
+	query: computed(() => route.query),
+	watch: [() => route.query],
+})
 
-const { filters, filteredOffers, clearFilters, cities, departments, hours, salary } =
-	useOfferFilters(offers)
+const offers = computed(() => data.value?.offers || [])
+const cities = computed(() => data.value?.filters?.cities || [])
+const departments = computed(() => data.value?.filters?.departments || [])
+const hours = computed(() => data.value?.filters?.hours || [])
+const salary = computed(() => data.value?.filters?.salary || [])
+
+const { filters, clearFilters } = useOfferFilters()
 
 const filterConfigs = computed<{ key: ArrayFilterKey; label: string; options: string[] }[]>(() => [
 	{ key: 'hours', label: 'Aantal uur', options: hours.value },
@@ -27,10 +35,7 @@ const filterConfigs = computed<{ key: ArrayFilterKey; label: string; options: st
 		>
 			Klik hier om je filters te resetten
 		</button>
-		<div v-if="pending">
-			<p class="text-gray-500">Loading...</p>
-		</div>
-		<div v-else-if="data">
+		<div>
 			<div class="mb-6 space-y-4">
 				<SearchBar v-model="filters.search" placeholder="Zoek op functietitel..." />
 
@@ -46,12 +51,13 @@ const filterConfigs = computed<{ key: ArrayFilterKey; label: string; options: st
 				</div>
 			</div>
 
-			<h2 class="text-lg font-bold text-blue-600 mb-4">
-				{{ filteredOffers.length }} van de {{ data.offers.length }} vacatures
-			</h2>
+			<h2 class="text-lg font-bold text-blue-600 mb-4">{{ offers.length }} vacatures</h2>
 
-			<div v-if="filteredOffers.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-				<template v-for="offer in filteredOffers" :key="offer.id">
+			<div v-if="pending">
+				<p class="text-gray-500">Loading...</p>
+			</div>
+			<div v-else-if="offers.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+				<template v-for="offer in offers" :key="offer.id">
 					<NuxtLink :to="{ path: `/${offer.id}`, query: route.query }">
 						<OfferCard class="h-full" :offer="offer" />
 					</NuxtLink>
@@ -60,9 +66,6 @@ const filterConfigs = computed<{ key: ArrayFilterKey; label: string; options: st
 			<div v-else class="flex flex-col items-center justify-center text-center gap-4 py-12">
 				<p class="text-gray-500 text-lg">Geen vacatures gevonden op basis van je filters</p>
 			</div>
-		</div>
-		<div v-else>
-			<p>No offers found</p>
 		</div>
 	</div>
 </template>
