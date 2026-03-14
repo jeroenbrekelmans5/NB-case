@@ -49,12 +49,15 @@ const filterConfigs = computed<FilterConfig[]>(() => [
 
 			<h2 class="text-lg font-bold text-blue-600 mb-4">{{ offers.length }} vacatures</h2>
 
-			<div v-if="pending">
-				<p class="text-gray-500">Loading...</p>
+			<div v-if="pending" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+				<OfferCardSkeleton v-for="n in 6" :key="n" />
 			</div>
 			<div v-else-if="offers.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
 				<template v-for="offer in offers" :key="offer.id">
-					<NuxtLink :to="{ path: `/${offer.id}`, query: route.query }">
+					<NuxtLink
+						:to="{ path: `/${offer.id}`, query: route.query }"
+						class="block transition-transform duration-200 hover:-translate-y-2"
+					>
 						<OfferCard class="h-full" :offer="offer" />
 					</NuxtLink>
 				</template>
