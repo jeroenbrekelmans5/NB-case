@@ -4,9 +4,10 @@ import type { FilterConfig } from '~/types'
 
 const route = useRoute()
 const { data, pending } = await useFetch('/api/offers', {
-	key: 'offers',
+	key: computed(
+		() => `/api/offers?${new URLSearchParams(route.query as Record<string, string>)}`,
+	),
 	query: computed(() => route.query),
-	watch: [() => route.query],
 })
 
 const offers = computed(() => data.value?.offers || [])
