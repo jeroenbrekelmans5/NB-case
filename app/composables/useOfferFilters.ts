@@ -15,7 +15,7 @@ export const useOfferFilters = () => {
 	const syncUrlWithFilters = useDebounceFn((newFilters: Filters) => {
 		const query = serializeFilters(newFilters, ARRAY_FILTERS)
 		router.replace({ query })
-	}, 300)
+	}, 500)
 
 	watch(filters, syncUrlWithFilters, { deep: true })
 

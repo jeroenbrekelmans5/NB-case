@@ -10,6 +10,13 @@ const { data, pending } = await useFetch('/api/offers', {
 })
 
 const offers = computed(() => data.value?.offers || [])
+const pagination = computed(() => data.value?.pagination)
+
+const router = useRouter()
+const goToPage = (page: number) => {
+	const query = { ...route.query, page }
+	router.push({ query })
+}
 
 const { filters, clearFilters } = useOfferFilters()
 
@@ -47,10 +54,13 @@ const filterConfigs = computed<FilterConfig[]>(() => [
 				</div>
 			</div>
 
-			<h2 class="text-lg font-bold text-blue-600 mb-4">{{ offers.length }} vacatures</h2>
+			<h2 class="text-lg font-bold text-blue-600 mb-4">
+				<template v-if="pagination">{{ pagination.total }} vacatures </template>
+				<template v-else>{{ offers.length }} vacatures</template>
+			</h2>
 
 			<div v-if="pending" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-				<OfferCardSkeleton v-for="n in 6" :key="n" />
+				<OfferCardSkeleton v-for="n in pagination?.limit" :key="n" />
 			</div>
 			<div v-else-if="offers.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
 				<template v-for="offer in offers" :key="offer.id">
@@ -65,6 +75,11 @@ const filterConfigs = computed<FilterConfig[]>(() => [
 			<div v-else class="flex flex-col items-center justify-center text-center gap-4 py-12">
 				<p class="text-gray-500 text-lg">Geen vacatures gevonden op basis van je filters</p>
 			</div>
+			<Pagination
+				v-if="pagination && pagination.totalPages > 1"
+				:pagination="pagination"
+				@go-to-page="goToPage"
+			/>
 		</div>
 	</div>
 </template>

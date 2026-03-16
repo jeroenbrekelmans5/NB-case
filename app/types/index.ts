@@ -39,3 +39,10 @@ export type FilterConfig = {
 	label: string
 	options: string[]
 }
+
+export type Pagination = {
+	page: number
+	limit: number
+	total: number
+	totalPages: number
+}
