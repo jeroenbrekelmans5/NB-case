@@ -60,7 +60,7 @@ const filterConfigs = computed<FilterConfig[]>(() => [
 			</h2>
 
 			<div v-if="pending" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-				<OfferCardSkeleton v-for="n in pagination?.limit" :key="n" />
+				<OfferCardSkeleton v-for="n in pagination?.limit" :key="`skeleton-${n}`" />
 			</div>
 			<div v-else-if="offers.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
 				<template v-for="offer in offers" :key="offer.id">
