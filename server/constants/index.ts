@@ -26,3 +26,6 @@ export const HOURS_BUCKETS: RangeBucket[] = [
 	{ min: 32, max: 40, label: '32-40 uur' },
 	{ min: 40, max: null, label: '40+ uur' },
 ]
+
+export const DEFAULT_OFFERS_PER_PAGE = 6
+export const DEFAULT_PAGE = 1

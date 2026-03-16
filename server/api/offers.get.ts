@@ -1,10 +1,8 @@
+import { DEFAULT_OFFERS_PER_PAGE, DEFAULT_PAGE } from '../constants'
 import { mapOffers } from '../mappers/offers'
 import type { RecruiteeApiResponse } from '../types/backend'
 import { applyFilters, generateFilterMetadata } from '../utils/offerFiltering'
 import { parseFiltersFromQuery } from '../utils/queryParser'
-
-const DEFAULT_PAGE = 1
-const DEFAULT_LIMIT = 6
 
 export default defineEventHandler(async (event) => {
 	const query = getQuery(event)
@@ -18,17 +16,17 @@ export default defineEventHandler(async (event) => {
 	const filters = parseFiltersFromQuery(event)
 	const filteredOffers = applyFilters(offers, filters)
 	const total = filteredOffers.length
-	const offset = (pageNumber - 1) * DEFAULT_LIMIT
-	const paginatedOffers = filteredOffers.slice(offset, offset + DEFAULT_LIMIT)
+	const offset = (pageNumber - 1) * DEFAULT_OFFERS_PER_PAGE
+	const paginatedOffers = filteredOffers.slice(offset, offset + DEFAULT_OFFERS_PER_PAGE)
 
 	return {
 		offers: paginatedOffers,
 		filters: generateFilterMetadata(offers),
 		pagination: {
 			page: pageNumber,
-			limit: DEFAULT_LIMIT,
+			limit: DEFAULT_OFFERS_PER_PAGE,
 			total,
-			totalPages: Math.ceil(total / DEFAULT_LIMIT),
+			totalPages: Math.ceil(total / DEFAULT_OFFERS_PER_PAGE),
 		},
 	}
 })
