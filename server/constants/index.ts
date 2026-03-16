@@ -1,4 +1,4 @@
-import type { ArrayFilterKey, Experience, RangeBucket } from '~/types'
+import type { Experience, RangeBucket } from '~/types'
 import type { RecruiteeExperienceCode } from '../types/backend'
 
 export const EXPERIENCE_CODES: Record<RecruiteeExperienceCode, Experience> = {
@@ -7,9 +7,6 @@ export const EXPERIENCE_CODES: Record<RecruiteeExperienceCode, Experience> = {
 	mid_level: 'Medior',
 	experienced: 'Senior',
 }
-
-export const EXACT_MATCH_FILTERS: ArrayFilterKey[] = ['city', 'department']
-export const RANGE_FILTERS: ArrayFilterKey[] = ['hours', 'salary']
 
 export const SALARY_BUCKETS: RangeBucket[] = [
 	{ min: 0, max: 2000, label: '€0 - €2000' },

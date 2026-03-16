@@ -1,4 +1,5 @@
 import type { H3Event } from 'h3'
+import { ARRAY_FILTERS } from '~/constants'
 import type { Filters } from '~/types'
 
 /**
@@ -18,9 +19,11 @@ export const parseFiltersFromQuery = (event: H3Event): Filters => {
 
 	return {
 		search: typeof query.search === 'string' ? query.search : undefined,
-		city: parseArrayParam(query.city as string[]),
-		department: parseArrayParam(query.department as string[]),
-		hours: parseArrayParam(query.hours as string[]),
-		salary: parseArrayParam(query.salary as string[]),
+		...Object.fromEntries(
+			ARRAY_FILTERS.map((key) => [
+				key,
+				parseArrayParam(query[key] as string | string[] | undefined),
+			]),
+		),
 	}
 }

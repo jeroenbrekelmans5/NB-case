@@ -1,5 +1,6 @@
+import { EXACT_MATCH_FILTERS } from '~/constants'
 import type { Filters, Offer, RangeBucket } from '~/types'
-import { EXACT_MATCH_FILTERS, HOURS_BUCKETS, SALARY_BUCKETS } from '../constants'
+import { HOURS_BUCKETS, SALARY_BUCKETS } from '../constants'
 
 // ============================================================================
 // Range Filter/Bucket utilities
