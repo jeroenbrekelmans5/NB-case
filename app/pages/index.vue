@@ -2,6 +2,8 @@
 import { useOfferFilters } from '~/composables/useOfferFilters'
 import type { FilterConfig } from '~/types'
 
+useHead({ title: 'Offers | NB Case' })
+
 const route = useRoute()
 const { data, pending } = await useFetch('/api/offers', {
 	key: computed(
