@@ -20,9 +20,8 @@ export const useOfferFilters = () => {
 	watch(filters, syncUrlWithFilters, { deep: true })
 
 	const clearFilters = () => {
-		filters.search = undefined
-		ARRAY_FILTERS.forEach((key) => {
-			filters[key] = []
+		Object.keys(filters).forEach((key) => {
+			filters[key as keyof Filters] = undefined
 		})
 	}
 
