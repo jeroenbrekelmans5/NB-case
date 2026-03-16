@@ -7,7 +7,7 @@ export const useOfferFilters = () => {
 	const route = useRoute()
 	const router = useRouter()
 
-	const filters = reactive<Filters>({
+	const filters = ref<Filters>({
 		search: route.query.search as string | undefined,
 		...Object.fromEntries(ARRAY_FILTERS.map((key) => [key, parseQueryParam(route.query, key)])),
 	})
@@ -20,9 +20,7 @@ export const useOfferFilters = () => {
 	watch(filters, syncUrlWithFilters, { deep: true })
 
 	const clearFilters = () => {
-		Object.keys(filters).forEach((key) => {
-			filters[key as keyof Filters] = undefined
-		})
+		filters.value = {}
 	}
 
 	return {
